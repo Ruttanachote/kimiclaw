@@ -1,0 +1,120 @@
+{
+  "name": "ai-devstudio-vscode",
+  "displayName": "AI DevStudio",
+  "description": "AI Development Team in VS Code",
+  "version": "1.0.0",
+  "publisher": "ai-devstudio",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Machine Learning", "Debuggers", "Other"],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "ai-devstudio.openChat",
+        "title": "Open AI Chat",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "ai-devstudio.explainCode",
+        "title": "Explain This Code",
+        "icon": "$(question)"
+      },
+      {
+        "command": "ai-devstudio.generateTests",
+        "title": "Generate Tests",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "ai-devstudio.refactor",
+        "title": "Refactor Code",
+        "icon": "$(wrench)"
+      },
+      {
+        "command": "ai-devstudio.fixErrors",
+        "title": "Fix Errors",
+        "icon": "$(lightbulb-autofix)"
+      },
+      {
+        "command": "ai-devstudio.generateDocs",
+        "title": "Generate Documentation",
+        "icon": "$(book)"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "ai-devstudio.explainCode",
+          "group": "ai-devstudio@1",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "ai-devstudio.generateTests",
+          "group": "ai-devstudio@2",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "ai-devstudio.refactor",
+          "group": "ai-devstudio@3",
+          "when": "editorHasSelection"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "ai-devstudio-sidebar",
+          "name": "AI DevStudio",
+          "when": "true"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "ai-devstudio",
+          "title": "AI DevStudio",
+          "icon": "$(robot)"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "AI DevStudio",
+      "properties": {
+        "ai-devstudio.apiUrl": {
+          "type": "string",
+          "default": "http://localhost:3000",
+          "description": "AI DevStudio API URL"
+        },
+        "ai-devstudio.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API Key for authentication"
+        },
+        "ai-devstudio.inlineCompletion": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable inline code completion"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "20.x",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "ws": "^8.14.2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "agent-factory",
+  "version": "1.0.0",
+  "dependencies": {
+    "redis": "^4.6.10",
+    "dockerode": "^4.0.0",
+    "handlebars": "^4.7.8",
+    "uuid": "^9.0.1"
+  }
+}

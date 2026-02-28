@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI DevStudio - Build Software with AI Team</title>
+  <meta name="description" content="AI-powered development platform with 12 specialized agents. Build software, videos, and automate social media with your AI team.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #06b6d4;
+      --accent: #f59e0b;
+      --dark: #0f172a;
+      --darker: #020617;
+      --light: #f8fafc;
+      --gray: #64748b;
+      --success: #10b981;
+      --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+      --gradient-2: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--darker);
+      color: var(--light);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(2, 6, 23, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: white;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--gray);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: white;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--gradient-1);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .btn-large {
+      padding: 1rem 2rem;
+      font-size: 1.125rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.3), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 50%, rgba(6, 182, 212, 0.2), transparent),
+        radial-gradient(ellipse 50% 30% at 20% 80%, rgba(139, 92, 246, 0.2), transparent);
+    }
+
+    .hero-content {
+      max-width: 1000px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      color: #a5b4fc;
+      margin-bottom: 2rem;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(to right, #fff 0%, #a5b4fc 50%, #67e8f9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--gray);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      color: var(--gray);
+      font-size: 0.875rem;
+    }
+
+    /* Demo Preview */
+    .demo-preview {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+    }
+
+    .browser-mockup {
+      background: var(--dark);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+    }
+
+    .browser-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      background: rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .browser-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .browser-dot.red { background: #ef4444; }
+    .browser-dot.yellow { background: #f59e0b; }
+    .browser-dot.green { background: #10b981; }
+
+    .browser-url {
+      flex: 1;
+      background: rgba(0,0,0,0.3);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      color: var(--gray);
+      margin-left: 1rem;
+    }
+
+    .demo-content {
+      padding: 2rem;
+      min-height: 400px;
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr 300px;
+      gap: 1.5rem;
+    }
+
+    .demo-panel {
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .demo-panel h3 {
+      font-size: 0.875rem;
+      color: var(--gray);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .agent-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .agent-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+
+    .agent-item.active {
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .agent-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .chat-area {
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .chat-message {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .chat-message.assistant {
+      flex-direction: row;
+    }
+
+    .chat-bubble {
+      background: rgba(99, 102, 241, 0.2);
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      border-bottom-left-radius: 4px;
+      font-size: 0.875rem;
+      max-width: 80%;
+    }
+
+    .chat-input {
+      margin-top: auto;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .chat-input input {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: white;
+      font-size: 0.875rem;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 6rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-label {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: rgba(99, 102, 241, 0.2);
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      color: #a5b4fc;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+      color: var(--gray);
+      font-size: 1.125rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(99, 102, 241, 0.3);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--gradient-1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-card p {
+      color: var(--gray);
+      font-size: 0.95rem;
+    }
+
+    /* Agents Section */
+    .agents {
+      padding: 6rem 2rem;
+      background: linear-gradient(to bottom, transparent, rgba(99, 102, 241, 0.05), transparent);
+    }
+
+    .agents-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .agent-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: all 0.3s;
+    }
+
+    .agent-card:hover {
+      border-color: rgba(99, 102, 241, 0.3);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .agent-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .agent-info h4 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .agent-info p {
+      color: var(--gray);
+      font-size: 0.875rem;
+    }
+
+    .agent-tag {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      background: rgba(99, 102, 241, 0.2);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: #a5b4fc;
+      margin-top: 0.5rem;
+    }
+
+    /* How It Works */
+    .how-it-works {
+      padding: 6rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .step {
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      width: 64px;
+      height: 64px;
+      background: var(--gradient-1);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-content h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-content p {
+      color: var(--gray);
+    }
+
+    /* CTA Section */
+    .cta {
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+
+    .cta-box {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+      background: var(--gradient-1);
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta h2 {
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .cta p {
+      color: rgba(255,255,255,0.8);
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-white {
+      background: white;
+      color: var(--primary);
+    }
+
+    .btn-white:hover {
+      background: rgba(255,255,255,0.9);
+    }
+
+    .btn-transparent {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .btn-transparent:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* Footer */
+    footer {
+      padding: 4rem 2rem 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .footer-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .footer-brand p {
+      color: var(--gray);
+      margin-top: 1rem;
+      max-width: 300px;
+    }
+
+    .footer-links h4 {
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+      color: var(--gray);
+    }
+
+    .footer-links ul {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-links a {
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      color: var(--gray);
+      font-size: 0.875rem;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .footer-social a {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .footer-social a:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .demo-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      
+      .hero-stats {
+        gap: 2rem;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .agents-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .step {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-bottom {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    }
+
+    /* Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <div class="logo-icon">🤖</div>
+        <span>AI DevStudio</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#agents">Agents</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#docs">Docs</a>
+        <a href="https://github.com" class="btn btn-secondary">GitHub</a>
+        <a href="#get-started" class="btn btn-primary">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        v5.1 Now Available with Security Hardening
+      </div>
+      <h1>Build Software with Your AI Team</h1>
+      <p class="hero-subtitle">
+        12 specialized AI agents working together to design, code, test, and deploy your projects. 
+        From idea to production in hours, not weeks.
+      </p>
+      <div class="hero-buttons">
+        <a href="#get-started" class="btn btn-primary btn-large">
+          🚀 Start Building Free
+        </a>
+        <a href="#demo" class="btn btn-secondary btn-large">
+          ▶️ Watch Demo
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-value">10</div>
+          <div class="stat-label">AI Agents</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">7</div>
+          <div class="stat-label">AI Providers</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">200+</div>
+          <div class="stat-label">Components</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">2h</div>
+          <div class="stat-label">Avg. Project Time</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo Preview -->
+  <div class="demo-preview" id="demo">
+    <div class="browser-mockup">
+      <div class="browser-header">
+        <div class="browser-dot red"></div>
+        <div class="browser-dot yellow"></div>
+        <div class="browser-dot green"></div>
+        <div class="browser-url">ai-devstudio.local/dashboard</div>
+      </div>
+      <div class="demo-content">
+        <div class="demo-grid">
+          <div class="demo-panel">
+            <h3>🤖 AI Agents</h3>
+            <div class="agent-list">
+              <div class="agent-item active">
+                <div class="agent-icon" style="background: rgba(99,102,241,0.2);">💬</div>
+                <div>
+                  <div>Secretary</div>
+                  <div style="font-size: 0.75rem; color: var(--gray);">Online</div>
+                </div>
+              </div>
+              <div class="agent-item">
+                <div class="agent-icon" style="background: rgba(6,182,212,0.2);">🎨</div>
+                <div>UI/UX Agent</div>
+              </div>
+              <div class="agent-item">
+                <div class="agent-icon" style="background: rgba(16,185,129,0.2);">⚛️</div>
+                <div>Frontend Agent</div>
+              </div>
+              <div class="agent-item">
+                <div class="agent-icon" style="background: rgba(245,158,11,0.2);">🔧</div>
+                <div>Backend Agent</div>
+              </div>
+              <div class="agent-item">
+                <div class="agent-icon" style="background: rgba(239,68,68,0.2);">🧪</div>
+                <div>QA Agent</div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-panel">
+            <h3>💬 Live Conversation</h3>
+            <div class="chat-area">
+              <div class="chat-message assistant">
+                <div class="agent-icon" style="background: rgba(99,102,241,0.2); font-size: 1rem;">💬</div>
+                <div class="chat-bubble">
+                  สวัสดีค่ะ! มีอะไรให้ช่วยสร้างไหมคะ? 🚀
+                </div>
+              </div>
+              <div class="chat-message" style="flex-direction: row-reverse;">
+                <div class="chat-bubble" style="background: rgba(255,255,255,0.1); border-bottom-left-radius: 12px; border-bottom-right-radius: 4px;">
+                  สร้างแอพจองห้องประชุมหน่อย
+                </div>
+              </div>
+              <div class="chat-message assistant">
+                <div class="agent-icon" style="background: rgba(99,102,241,0.2); font-size: 1rem;">💬</div>
+                <div class="chat-bubble">
+                  ได้ค่ะ! กำลังสร้างโปรเจกและเรียก Agents มาช่วย... ⏳
+                </div>
+              </div>
+              <div class="chat-input">
+                <input type="text" placeholder="พิมพ์ข้อความ..." readonly>
+                <button class="btn btn-primary" style="padding: 0.5rem 1rem;">➤</button>
+              </div>
+            </div>
+          </div>
+          <div class="demo-panel">
+            <h3>📊 Project Status</h3>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+              <div style="padding: 1rem; background: rgba(16,185,129,0.1); border-radius: 8px; border: 1px solid rgba(16,185,129,0.3);">
+                <div style="font-size: 0.75rem; color: var(--success);">✓ COMPLETED</div>
+                <div style="font-weight: 600;">Design System</div>
+              </div>
+              <div style="padding: 1rem; background: rgba(6,182,212,0.1); border-radius: 8px; border: 1px solid rgba(6,182,212,0.3);">
+                <div style="font-size: 0.75rem; color: var(--secondary);">◐ IN PROGRESS</div>
+                <div style="font-weight: 600;">Frontend (65%)</div>
+              </div>
+              <div style="padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                <div style="font-size: 0.75rem; color: var(--gray);">○ PENDING</div>
+                <div style="font-weight: 600;">Backend</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <div class="section-label">✨ Features</div>
+      <h2>Everything You Need to Build</h2>
+      <p class="section-subtitle">
+        From design to deployment, our AI agents handle every aspect of software development.
+      </p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>12 AI Agents</h3>
+        <p>Specialized agents for research, UI/UX, frontend, backend, QA, project management, and more.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: var(--gradient-2);">💬</div>
+        <h3>Natural Language</h3>
+        <p>Just describe what you want. No coding required. Supports Thai and multiple languages.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>Visual Design</h3>
+        <p>AI generates wireframes, design systems, and responsive layouts automatically.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);">⚡</div>
+        <h3>Code Generation</h3>
+        <p>Production-ready Vue 3, React, or HTML code with best practices built-in.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);">🧪</div>
+        <h3>Automated Testing</h3>
+        <p>Visual testing across devices, accessibility checks, and performance monitoring.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">🌐</div>
+        <h3>Website Clone</h3>
+        <p>Clone any website's UI. Just paste the URL and AI recreates the design.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);">🔒</div>
+        <h3>Project Isolation</h3>
+        <p>Each project has isolated memory. AI never gets confused between projects.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #10b981 0%, #22c55e 100%);">⚙️</div>
+        <h3>7 AI Providers</h3>
+        <p>Claude, GPT-4, Gemini, Kimi, DeepSeek, OpenRouter, and local Ollama support.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);">🎬</div>
+        <h3>Video Generation</h3>
+        <p>Create videos from text or images. Multiple AI providers supported.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);">📱</div>
+        <h3>Social Media</h3>
+        <p>Automate Facebook and TikTok. AI posts content and replies to comments.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Agents Section -->
+  <section class="agents" id="agents">
+    <div class="agents-container">
+      <div class="section-header">
+        <div class="section-label">🤖 Meet Your Team</div>
+        <h2>12 Specialized AI Agents</h2>
+        <p class="section-subtitle">
+          Each agent has specific skills and works together to deliver your project.
+        </p>
+      </div>
+      <div class="agents-grid">
+        <div class="agent-card">
+          <div class="agent-avatar" style="background: rgba(99,102,241,0.2);">💬</div>
+          <div class="agent-info">
+            <h4>Secretary</h4>
+            <p>Your main interface. Understands requests and delegates to other agents.</p>
+            <span class="agent-tag">Thai Support</span>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background: rgba(6,182,212,0.2);">🎨</div>
+          <div class="agent-info">
+            <h4>UI/UX Agent</h4>
+            <p>Creates wireframes, design systems, and responsive layouts.</p>
+            <span class="agent-tag">Figma Export</span>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background: rgba(16,185,129,0.2);">⚛️</div>
+          <div class="agent-info">
+            <h4>Frontend Agent</h4>
+            <p>Builds Vue 3 or React applications with TypeScript.</p>
+            <span class="agent-tag">Vue / React</span>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background: rgba(245,158,11,0.2);">🔧</div>
+          <div class="agent-info">
+            <h4>Backend Agent</h4>
+            <p>Creates APIs, databases, and server infrastructure.</p>
+            <span class="agent-tag">Node.js / PostgreSQL</span>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background: rgba(239,68,68,0.2);">🧪</div>
+          <div class="agent-info">
+            <h4>QA Agent</h4>
+            <p>Tests functionality, security, and performance.</p>
+            <span class="agent-tag">Automated Testing</span>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background: rgba(139,92,246,0.2);">🔍</div>
+          <div class="agent-info">
+            <h4>Research Agent</h4>
+            <p>Gathers information, analyzes competitors, finds resources.</p>
+            <span class="agent-tag">Web Scraping</span>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background: rgba(236,72,153,0.2);">📊</div>
+          <div class="agent-info">
+            <h4>PM/BA Agent</h4>
+            <p>Manages project timeline, requirements, and documentation.</p>
+            <span class="agent-tag">Agile / Scrum</span>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background: rgba(59,130,246,0.2);">👁️</div>
+          <div class="agent-info">
+            <h4>Supervisor</h4>
+            <p>Monitors all agents, handles approvals, and optimizes workflows.</p>
+            <span class="agent-tag">Orchestration</span>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background: rgba(14,165,233,0.2);">🌐</div>
+          <div class="agent-info">
+            <h4>Clone Agent</h4>
+            <p>Clones any website's UI and recreates it in your chosen framework.</p>
+            <span class="agent-tag">Website Clone</span>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background: rgba(168,85,247,0.2);">🧪</div>
+          <div class="agent-info">
+            <h4>Visual Tester</h4>
+            <p>Tests across devices, checks responsive design, and analyzes UI.</p>
+            <span class="agent-tag">Visual Testing</span>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background: rgba(236,72,153,0.2);">🎬</div>
+          <div class="agent-info">
+            <h4>Video Studio</h4>
+            <p>Creates videos from text or images using multiple AI providers.</p>
+            <span class="agent-tag">Text/Image to Video</span>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background: rgba(245,158,11,0.2);">📱</div>
+          <div class="agent-info">
+            <h4>Social Media</h4>
+            <p>Manages Facebook and TikTok accounts, posts content, replies automatically.</p>
+            <span class="agent-tag">FB / TikTok</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="section-header">
+      <div class="section-label">🚀 How It Works</div>
+      <h2>From Idea to Production in 3 Steps</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>Describe Your Project</h3>
+          <p>Tell the Secretary agent what you want to build. Use natural language in Thai or English. Be as detailed or as brief as you like.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>AI Team Gets to Work</h3>
+          <p>Our 12 AI agents collaborate automatically. UI/UX designs, Frontend codes, Backend builds APIs, QA tests everything.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>Review & Deploy</h3>
+          <p>Watch progress in real-time, request changes via chat, and deploy when ready. Your project is production-ready.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta" id="get-started">
+    <div class="cta-box">
+      <div class="cta-content">
+        <h2>Ready to Build Something Amazing?</h2>
+        <p>Join thousands of developers building with AI. Start free, upgrade when you need more power.</p>
+        <div class="cta-buttons">
+          <a href="#" class="btn btn-white btn-large">
+            🚀 Get Started Free
+          </a>
+          <a href="#" class="btn btn-transparent btn-large">
+            📖 Read Documentation
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <div class="logo-icon">🤖</div>
+            <span>AI DevStudio</span>
+          </a>
+          <p>Build software faster with your AI team. From idea to production in hours.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#agents">Agents</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#changelog">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#docs">Documentation</a></li>
+            <li><a href="#api">API Reference</a></li>
+            <li><a href="#tutorials">Tutorials</a></li>
+            <li><a href="#examples">Examples</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#blog">Blog</a></li>
+            <li><a href="#careers">Careers</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 AI DevStudio. Built with ❤️ by AI agents.</p>
+        <div class="footer-social">
+          <a href="#">𝕏</a>
+          <a href="#">in</a>
+          <a href="#">GitHub</a>
+          <a href="#">Discord</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

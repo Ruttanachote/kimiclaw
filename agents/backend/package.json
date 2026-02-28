@@ -1,0 +1,9 @@
+{
+  "name": "backend-agent",
+  "version": "1.0.0",
+  "dependencies": {
+    "redis": "^4.6.10",
+    "express": "^4.18.2",
+    "dockerode": "^4.0.0"
+  }
+}

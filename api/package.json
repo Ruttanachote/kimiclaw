@@ -1,0 +1,21 @@
+{
+  "name": "ai-devstudio-api",
+  "version": "5.0.0",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "ws": "^8.14.2",
+    "redis": "^4.6.10",
+    "pg": "^8.11.3",
+    "uuid": "^9.0.1",
+    "express-rate-limit": "^7.1.5",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "axios": "^1.6.2",
+    "stripe": "^14.5.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "express-session": "^1.17.3",
+    "crypto-js": "^4.2.0"
+  }
+}

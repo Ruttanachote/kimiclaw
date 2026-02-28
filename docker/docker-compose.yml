@@ -1,0 +1,311 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: ai-devstudio-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../web/dist:/usr/share/nginx/html:ro
+    depends_on:
+      - api-gateway
+      - n8n
+    networks:
+      - ai-devstudio
+
+  # N8N Workflow Engine
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: ai-devstudio-n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD:-admin123}
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - WEBHOOK_URL=http://localhost:5678/
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${DB_NAME:-devstudio}
+      - DB_POSTGRESDB_USER=${DB_USER:-devstudio}
+      - DB_POSTGRESDB_PASSWORD=${DB_PASSWORD:-devstudio123}
+    volumes:
+      - n8n-data:/home/node/.n8n
+      - ../n8n/workflows:/backup/workflows
+    depends_on:
+      - postgres
+    networks:
+      - ai-devstudio
+
+  api-gateway:
+    build:
+      context: ../api
+      dockerfile: Dockerfile
+    container_name: ai-devstudio-api
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-devstudio}
+      - DB_PASSWORD=${DB_PASSWORD:-devstudio123}
+      - DB_NAME=${DB_NAME:-devstudio}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DOCKER_SOCKET=/var/run/docker.sock
+      - N8N_URL=http://n8n:5678
+      - N8N_API_KEY=${N8N_API_KEY}
+      - JWT_SECRET=${JWT_SECRET:-devstudio-secret-key}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../shared/outputs:/app/outputs
+      - ../shared/projects:/app/projects
+      - ../api/templates:/app/templates
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - redis
+      - postgres
+      - n8n
+    networks:
+      - ai-devstudio
+
+  agent-factory:
+    build:
+      context: ../agent-factory
+      dockerfile: Dockerfile
+    container_name: ai-devstudio-factory
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - DOCKER_SOCKET=/var/run/docker.sock
+      - N8N_URL=http://n8n:5678
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../shared/projects:/app/projects
+      - ../agent-factory/templates:/app/templates
+    depends_on:
+      - redis
+      - n8n
+    networks:
+      - ai-devstudio
+
+  # All 7 Agents
+  research-agent:
+    build:
+      context: ../agents/research
+      dockerfile: Dockerfile
+    container_name: ai-devstudio-research
+    privileged: true
+    environment:
+      - DISPLAY=:99
+      - VNC_PASSWORD=${VNC_PASSWORD:-devstudio123}
+      - REDIS_URL=redis://redis:6379
+      - AGENT_NAME=research-agent
+      - AGENT_TYPE=research
+      - MODEL_PROVIDER=local
+      - N8N_WEBHOOK=http://n8n:5678/webhook/research
+    ports:
+      - "5900:5900"
+      - "8080:8080"
+    volumes:
+      - ../shared/outputs:/app/outputs
+      - ../shared/projects:/app/projects
+    depends_on:
+      - redis
+      - n8n
+    networks:
+      - ai-devstudio
+
+  uiux-agent:
+    build:
+      context: ../agents/uiux
+      dockerfile: Dockerfile
+    container_name: ai-devstudio-uiux
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - AGENT_NAME=uiux-agent
+      - AGENT_TYPE=uiux
+      - MODEL_PROVIDER=anthropic
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - FIGMA_API_KEY=${FIGMA_API_KEY}
+      - N8N_WEBHOOK=http://n8n:5678/webhook/uiux
+    volumes:
+      - ../shared/outputs:/app/outputs
+      - ../shared/projects:/app/projects
+    depends_on:
+      - redis
+      - n8n
+    networks:
+      - ai-devstudio
+
+  frontend-agent:
+    build:
+      context: ../agents/frontend
+      dockerfile: Dockerfile
+    container_name: ai-devstudio-frontend
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - AGENT_NAME=frontend-agent
+      - AGENT_TYPE=frontend
+      - MODEL_PROVIDER=local
+      - N8N_WEBHOOK=http://n8n:5678/webhook/frontend
+    volumes:
+      - ../shared/outputs:/app/outputs
+      - ../shared/projects:/app/projects
+    depends_on:
+      - redis
+      - n8n
+    networks:
+      - ai-devstudio
+
+  backend-agent:
+    build:
+      context: ../agents/backend
+      dockerfile: Dockerfile
+    container_name: ai-devstudio-backend
+    privileged: true
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - AGENT_NAME=backend-agent
+      - AGENT_TYPE=backend
+      - MODEL_PROVIDER=local
+      - DOCKER_SOCKET=/var/run/docker.sock
+      - N8N_WEBHOOK=http://n8n:5678/webhook/backend
+    volumes:
+      - ../shared/outputs:/app/outputs
+      - ../shared/projects:/app/projects
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - redis
+      - n8n
+    networks:
+      - ai-devstudio
+
+  qa-agent:
+    build:
+      context: ../agents/qa
+      dockerfile: Dockerfile
+    container_name: ai-devstudio-qa
+    privileged: true
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - AGENT_NAME=qa-agent
+      - AGENT_TYPE=qa
+      - MODEL_PROVIDER=local
+      - N8N_WEBHOOK=http://n8n:5678/webhook/qa
+    volumes:
+      - ../shared/outputs:/app/outputs
+      - ../shared/projects:/app/projects
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - redis
+      - n8n
+    networks:
+      - ai-devstudio
+
+  pmba-agent:
+    build:
+      context: ../agents/pmba
+      dockerfile: Dockerfile
+    container_name: ai-devstudio-pmba
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - AGENT_NAME=pmba-agent
+      - AGENT_TYPE=pmba
+      - MODEL_PROVIDER=anthropic
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - N8N_WEBHOOK=http://n8n:5678/webhook/pmba
+    volumes:
+      - ../shared/outputs:/app/outputs
+      - ../shared/projects:/app/projects
+    depends_on:
+      - redis
+      - n8n
+    networks:
+      - ai-devstudio
+
+  supervisor-agent:
+    build:
+      context: ../agents/supervisor
+      dockerfile: Dockerfile
+    container_name: ai-devstudio-supervisor
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - AGENT_NAME=supervisor-agent
+      - AGENT_TYPE=supervisor
+      - MODEL_PROVIDER=anthropic
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - DB_HOST=postgres
+      - N8N_WEBHOOK=http://n8n:5678/webhook/supervisor
+    volumes:
+      - ../shared/outputs:/app/outputs
+      - ../shared/projects:/app/projects
+    depends_on:
+      - redis
+      - postgres
+      - n8n
+    networks:
+      - ai-devstudio
+
+  secretary-agent:
+    build:
+      context: ../agents/secretary
+      dockerfile: Dockerfile
+    container_name: ai-devstudio-secretary
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - AGENT_NAME=secretary-agent
+      - AGENT_TYPE=secretary
+      - MODEL_PROVIDER=anthropic
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - N8N_WEBHOOK=http://n8n:5678/webhook/secretary
+    volumes:
+      - ../shared/outputs:/app/outputs
+      - ../shared/projects:/app/projects
+    depends_on:
+      - redis
+      - n8n
+    networks:
+      - ai-devstudio
+
+  redis:
+    image: redis:7-alpine
+    container_name: ai-devstudio-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - ai-devstudio
+    command: redis-server --appendonly yes
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: ai-devstudio-postgres
+    environment:
+      - POSTGRES_USER=${DB_USER:-devstudio}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-devstudio123}
+      - POSTGRES_DB=${DB_NAME:-devstudio}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ../database/init:/docker-entrypoint-initdb.d
+    networks:
+      - ai-devstudio
+
+volumes:
+  redis-data:
+  postgres-data:
+  n8n-data:
+
+networks:
+  ai-devstudio:
+    driver: bridge

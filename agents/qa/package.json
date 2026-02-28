@@ -1,0 +1,11 @@
+{
+  "name": "qa-agent",
+  "version": "1.0.0",
+  "dependencies": {
+    "redis": "^4.6.10",
+    "jest": "^29.7.0",
+    "cypress": "^13.6.0",
+    "@playwright/test": "^1.40.0",
+    "axios": "^1.6.2"
+  }
+}

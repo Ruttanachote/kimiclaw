@@ -1,0 +1,106 @@
+{
+  "providers": [
+    {
+      "id": "anthropic",
+      "name": "Anthropic Claude",
+      "icon": "🟣",
+      "description": "Best for coding and reasoning",
+      "models": [
+        { "id": "claude-3-5-sonnet-20241022", "name": "Claude 3.5 Sonnet", "context": 200000, "pricing": { "input": 3, "output": 15 } },
+        { "id": "claude-3-opus-20240229", "name": "Claude 3 Opus", "context": 200000, "pricing": { "input": 15, "output": 75 } },
+        { "id": "claude-3-haiku-20240307", "name": "Claude 3 Haiku", "context": 200000, "pricing": { "input": 0.25, "output": 1.25 } }
+      ],
+      "requiresKey": true,
+      "baseUrl": "https://api.anthropic.com",
+      "docsUrl": "https://console.anthropic.com"
+    },
+    {
+      "id": "google",
+      "name": "Google Gemini",
+      "icon": "🔵",
+      "description": "Multimodal with large context",
+      "models": [
+        { "id": "gemini-1.5-pro", "name": "Gemini 1.5 Pro", "context": 2000000, "pricing": { "input": 3.5, "output": 10.5 } },
+        { "id": "gemini-1.5-flash", "name": "Gemini 1.5 Flash", "context": 1000000, "pricing": { "input": 0.35, "output": 0.7 } },
+        { "id": "gemini-pro", "name": "Gemini Pro", "context": 32000, "pricing": { "input": 0.5, "output": 1.5 } }
+      ],
+      "requiresKey": true,
+      "baseUrl": "https://generativelanguage.googleapis.com",
+      "docsUrl": "https://makersuite.google.com/app/apikey"
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "icon": "🌐",
+      "description": "Access 100+ models with one key",
+      "models": [
+        { "id": "anthropic/claude-3.5-sonnet", "name": "Claude 3.5 Sonnet (OR)", "context": 200000, "pricing": { "input": 3, "output": 15 } },
+        { "id": "google/gemini-pro-1.5", "name": "Gemini Pro 1.5 (OR)", "context": 2000000, "pricing": { "input": 3.5, "output": 10.5 } },
+        { "id": "meta-llama/llama-3.1-405b", "name": "Llama 3.1 405B", "context": 128000, "pricing": { "input": 2, "output": 2 } },
+        { "id": "deepseek/deepseek-chat", "name": "DeepSeek V2.5", "context": 64000, "pricing": { "input": 0.14, "output": 0.28 } }
+      ],
+      "requiresKey": true,
+      "baseUrl": "https://openrouter.ai/api",
+      "docsUrl": "https://openrouter.ai/keys"
+    },
+    {
+      "id": "moonshot",
+      "name": "Moonshot AI (Kimi)",
+      "icon": "🌙",
+      "description": "Long context Chinese model",
+      "models": [
+        { "id": "moonshot-v1-8k", "name": "Kimi 8K", "context": 8192, "pricing": { "input": 0.5, "output": 0.5 } },
+        { "id": "moonshot-v1-32k", "name": "Kimi 32K", "context": 32768, "pricing": { "input": 1, "output": 1 } },
+        { "id": "moonshot-v1-128k", "name": "Kimi 128K", "context": 131072, "pricing": { "input": 2, "output": 2 } }
+      ],
+      "requiresKey": true,
+      "baseUrl": "https://api.moonshot.cn",
+      "docsUrl": "https://platform.moonshot.cn"
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "icon": "🐋",
+      "description": "Affordable high-quality models",
+      "models": [
+        { "id": "deepseek-chat", "name": "DeepSeek Chat", "context": 64000, "pricing": { "input": 0.14, "output": 0.28 } },
+        { "id": "deepseek-coder", "name": "DeepSeek Coder", "context": 64000, "pricing": { "input": 0.14, "output": 0.28 } },
+        { "id": "deepseek-reasoner", "name": "DeepSeek Reasoner", "context": 64000, "pricing": { "input": 0.28, "output": 0.56 } }
+      ],
+      "requiresKey": true,
+      "baseUrl": "https://api.deepseek.com",
+      "docsUrl": "https://platform.deepseek.com"
+    },
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "icon": "🟢",
+      "description": "GPT models with function calling",
+      "models": [
+        { "id": "gpt-4o", "name": "GPT-4o", "context": 128000, "pricing": { "input": 5, "output": 15 } },
+        { "id": "gpt-4o-mini", "name": "GPT-4o Mini", "context": 128000, "pricing": { "input": 0.15, "output": 0.6 } },
+        { "id": "gpt-4-turbo", "name": "GPT-4 Turbo", "context": 128000, "pricing": { "input": 10, "output": 30 } }
+      ],
+      "requiresKey": true,
+      "baseUrl": "https://api.openai.com",
+      "docsUrl": "https://platform.openai.com"
+    },
+    {
+      "id": "ollama",
+      "name": "Ollama (Local)",
+      "icon": "🏠",
+      "description": "Run models locally for free",
+      "models": [
+        { "id": "llama3.1", "name": "Llama 3.1", "context": 128000, "pricing": { "input": 0, "output": 0 } },
+        { "id": "codellama", "name": "Code Llama", "context": 16000, "pricing": { "input": 0, "output": 0 } },
+        { "id": "mistral", "name": "Mistral", "context": 32000, "pricing": { "input": 0, "output": 0 } },
+        { "id": "qwen2.5", "name": "Qwen 2.5", "context": 128000, "pricing": { "input": 0, "output": 0 } },
+        { "id": "deepseek-coder-v2", "name": "DeepSeek Coder V2", "context": 128000, "pricing": { "input": 0, "output": 0 } }
+      ],
+      "requiresKey": false,
+      "baseUrl": "http://localhost:11434",
+      "docsUrl": "https://ollama.com/download",
+      "local": true
+    }
+  ]
+}
