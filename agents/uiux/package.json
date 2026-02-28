@@ -3,8 +3,6 @@
   "version": "1.0.0",
   "dependencies": {
     "redis": "^4.6.10",
-    "axios": "^1.6.2",
-    "figma-api": "^2.0.0",
-    "@builder.io/sdk": "^2.1.0"
+    "axios": "^1.6.2"
   }
 }
