@@ -1,0 +1,15 @@
+{
+  "name": "default-agent",
+  "version": "1.0.0",
+  "description": "Default agent template",
+  "type": "generic",
+  "config": {
+    "memoryLimit": "512m",
+    "cpuLimit": "1.0",
+    "autoRestart": true
+  },
+  "env": {
+    "NODE_ENV": "production",
+    "LOG_LEVEL": "info"
+  }
+}

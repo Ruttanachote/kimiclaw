@@ -1,306 +1,58 @@
-const redis = require('redis');
-const axios = require('axios');
-const fs = require('fs-extra');
+const express = require('express');
+const fs = require('fs').promises;
 const path = require('path');
+const app = express();
+app.use(express.json());
 
-class FrontendAgent {
-  constructor() {
-    this.name = process.env.AGENT_NAME || 'frontend-agent';
-    this.type = process.env.AGENT_TYPE || 'frontend';
-    this.redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-    this.apiGateway = process.env.API_GATEWAY || 'http://localhost:3000';
-    
-    this.redisClient = redis.createClient({ url: this.redisUrl });
-    this.redisPub = this.redisClient.duplicate();
-    
-    this.status = 'idle';
-    this.currentTask = null;
-    this.progress = 0;
-  }
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', agent: 'frontend-agent' });
+});
 
-  async initialize() {
-    console.log(`Initializing ${this.name}...`);
+// Generate Vue component
+app.post('/generate', async (req, res) => {
+  const { name, type, props } = req.body;
+  
+  try {
+    const component = generateVueComponent(name, type, props);
     
-    await this.redisClient.connect();
-    await this.redisPub.connect();
-    
-    this._announcePresence();
-    console.log(`${this.name} ready!`);
-  }
-
-  _announcePresence() {
-    const info = {
-      name: this.name,
-      type: this.type,
-      status: this.status,
-      progress: this.progress,
-      capabilities: ['generate-code', 'setup-project', 'build', 'lint', 'vue3', 'vite', 'tailwind'],
-      updated_at: new Date().toISOString()
-    };
-    this.redisClient.hSet('agents', this.name, JSON.stringify(info));
-  }
-
-  async listen() {
-    const pubsub = this.redisClient.duplicate();
-    await pubsub.connect();
-    
-    await pubsub.subscribe(`agent:${this.name}:commands`, async (message) => {
-      try {
-        const command = JSON.parse(message);
-        console.log('Received command:', command);
-        await this.handleCommand(command);
-      } catch (err) {
-        console.error('Command error:', err);
-        this._reportError(err.message);
+    res.json({ 
+      success: true, 
+      component: {
+        name,
+        filename: `${name}.vue`,
+        content: component
       }
     });
-
-    // Also listen to broadcast
-    await pubsub.subscribe('agents:broadcast', async (message) => {
-      const data = JSON.parse(message);
-      if (data.target === this.name || data.target === 'all') {
-        await this.handleCommand(data);
-      }
-    });
-
-    console.log('Listening for commands...');
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
+});
 
-  async handleCommand(command) {
-    const { action, task_id } = command;
-    
-    this.status = 'busy';
-    this.currentTask = command;
-    this.progress = 0;
-    this._updateStatus();
-
-    try {
-      let result;
-      
-      switch (action) {
-        case 'setup-project':
-          result = await this.setupProject(command);
-          break;
-        case 'generate-component':
-          result = await this.generateComponent(command);
-          break;
-        case 'build':
-          result = await this.buildProject(command);
-          break;
-        case 'chat':
-          result = await this.handleChat(command);
-          break;
-        default:
-          result = { error: `Unknown action: ${action}` };
-      }
-
-      this._reportResult(task_id, result);
-      
-      // If successful, notify other agents
-      if (result.success && command.notify) {
-        await this._notifyAgents(command.notify, result);
-      }
-      
-    } catch (err) {
-      this._reportError(err.message);
-    } finally {
-      this.status = 'idle';
-      this.progress = 100;
-      this._updateStatus();
-    }
-  }
-
-  async setupProject({ projectName, template = 'vue3' }) {
-    console.log(`Setting up project: ${projectName}`);
-    
-    const projectPath = `/app/projects/${projectName}`;
-    
-    // Create project directory
-    await fs.ensureDir(projectPath);
-    
-    // Generate basic Vue 3 structure
-    const files = {
-      'package.json': JSON.stringify({
-        name: projectName,
-        version: '1.0.0',
-        type: 'module',
-        scripts: {
-          dev: 'vite',
-          build: 'vue-tsc && vite build',
-          preview: 'vite preview'
-        },
-        dependencies: {
-          vue: '^3.4.0',
-          'vue-router': '^4.2.0',
-          pinia: '^2.1.0'
-        },
-        devDependencies: {
-          '@vitejs/plugin-vue': '^5.0.0',
-          typescript: '^5.3.0',
-          vite: '^5.0.0',
-          'vue-tsc': '^1.8.0',
-          tailwindcss: '^3.4.0',
-          autoprefixer: '^10.4.0',
-          postcss: '^8.4.0'
-        }
-      }, null, 2),
-      
-      'index.html': `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${projectName}</title>
-</head>
-<body>
-  <div id="app"></div>
-  <script type="module" src="/src/main.ts"></script>
-</body>
-</html>`,
-
-      'src/main.ts': `import { createApp } from 'vue'
-import App from './App.vue'
-import './style.css'
-
-createApp(App).mount('#app')`,
-
-      'src/App.vue': `<template>
-  <div class="min-h-screen bg-slate-900 text-white p-8">
-    <h1 class="text-3xl font-bold">${projectName}</h1>
-    <p class="mt-4 text-slate-400">Generated by Frontend Agent</p>
-  </div>
-</template>`,
-
-      'src/style.css': `@tailwind base;
-@tailwind components;
-@tailwind utilities;`,
-
-      'vite.config.ts': `import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-
-export default defineConfig({
-  plugins: [vue()],
-})`
-    };
-
-    // Write all files
-    for (const [filePath, content] of Object.entries(files)) {
-      const fullPath = path.join(projectPath, filePath);
-      await fs.ensureDir(path.dirname(fullPath));
-      await fs.writeFile(fullPath, content);
-    }
-
-    this.progress = 100;
-    
-    return {
-      success: true,
-      projectName,
-      projectPath,
-      message: `Project ${projectName} created with Vue 3 + Vite + Tailwind`
-    };
-  }
-
-  async generateComponent({ projectName, componentName, props = [] }) {
-    const projectPath = `/app/projects/${projectName}`;
-    const componentPath = path.join(projectPath, 'src/components', `${componentName}.vue`);
-    
-    const propsDef = props.map(p => `${p}: string`).join(', ');
-    const propsTemplate = props.map(p => `:{{ p }}="${p}"`).join(' ');
-    
-    const content = `<template>
-  <div class="component-${componentName.toLowerCase()}">
-    <h2>${componentName}</h2>
-    ${props.map(p => `<p>{{ ${p} }}</p>`).join('\n    ')}
+function generateVueComponent(name, type, props = []) {
+  const propsDef = props.map(p => `${p}: { type: String, required: true }`).join(',\n    ');
+  
+  return `<template>
+  <div class="${name.toLowerCase()}">
+    <!-- ${type} component -->
+    <slot></slot>
   </div>
 </template>
 
-<script setup lang="ts">
-interface Props {
-  ${propsDef || '// no props'}
+<script setup>
+defineProps({
+  ${propsDef}
+});
+</script>
+
+<style scoped>
+.${name.toLowerCase()} {
+  /* Component styles */
+}
+</style>`;
 }
 
-defineProps<Props>()
-</script>`;
-
-    await fs.ensureDir(path.dirname(componentPath));
-    await fs.writeFile(componentPath, content);
-
-    return {
-      success: true,
-      componentName,
-      componentPath,
-      message: `Component ${componentName} created`
-    };
-  }
-
-  async buildProject({ projectName }) {
-    // In real implementation, would run npm install && npm run build
-    return {
-      success: true,
-      message: `Build command queued for ${projectName}`
-    };
-  }
-
-  async handleChat({ message, context }) {
-    // Simple response - in real implementation would use LLM
-    return {
-      success: true,
-      response: `Frontend Agent received: "${message}". I can help you create Vue 3 projects and components.`,
-      capabilities: ['setup-project', 'generate-component', 'build']
-    };
-  }
-
-  async _notifyAgents(targets, data) {
-    for (const target of targets) {
-      await this.redisPub.publish(`agent:${target}:commands`, JSON.stringify({
-        action: 'notification',
-        from: this.name,
-        data
-      }));
-    }
-  }
-
-  _updateStatus() {
-    const info = {
-      name: this.name,
-      type: this.type,
-      status: this.status,
-      progress: this.progress,
-      currentTask: this.currentTask,
-      updated_at: new Date().toISOString()
-    };
-    this.redisClient.hSet('agents', this.name, JSON.stringify(info));
-  }
-
-  _reportResult(taskId, result) {
-    const message = {
-      task_id: taskId,
-      agent: this.name,
-      status: 'completed',
-      result,
-      timestamp: new Date().toISOString()
-    };
-    this.redisPub.publish('agents:results', JSON.stringify(message));
-    this.redisPub.publish(`task:${taskId}:result`, JSON.stringify(message));
-  }
-
-  _reportError(error) {
-    const message = {
-      agent: this.name,
-      status: 'error',
-      error,
-      timestamp: new Date().toISOString()
-    };
-    this.redisPub.publish('agents:errors', JSON.stringify(message));
-  }
-}
-
-// Start agent
-const agent = new FrontendAgent();
-
-async function main() {
-  await agent.initialize();
-  await agent.listen();
-}
-
-main().catch(console.error);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`⚛️ Frontend Agent running on port ${PORT}`);
+});
